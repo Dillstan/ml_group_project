@@ -9,9 +9,9 @@ from collections import defaultdict
 # -----------------------------
 # Config
 # -----------------------------
-MAT_FILE = "../imdb_crop/imdb.mat"  # or wiki.mat
-IMDB_TSV = "name.basics.tsv"
-OUTPUT_JSON = "imdbwiki_to_imdb.json"
+MAT_FILE = "../../../imdb_crop/imdb.mat"  # or wiki.mat
+IMDB_TSV = "../../../name.basics.tsv"
+OUTPUT_JSON = "../../../imdbwiki_to_imdb.json"
 
 # -----------------------------
 # Utilities

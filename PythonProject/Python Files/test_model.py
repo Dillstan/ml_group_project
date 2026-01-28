@@ -6,7 +6,7 @@ import tensorflow as tf
 from scipy.io import loadmat  # Import this at the beginning of your script
 from collections import namedtuple
 
-MODEL_PATH = "../Models/mini_test_2/epoch/my_model_epoch_02.keras"
+MODEL_PATH = "../../../Models/mini_test_2/epoch/my_model_epoch_02.keras"
 # Specify the image size
 IMG_SIZE = (160, 160)
 # Load the model from the .h5 file

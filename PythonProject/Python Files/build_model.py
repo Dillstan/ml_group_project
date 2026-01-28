@@ -12,7 +12,7 @@ TEST_NUM = 2
 BATCH_SIZE = 128
 IMG_SIZE = (160, 160)
 
-root='../Models/mini_test_'+str(TEST_NUM)
+root='../../../Models/mini_test_'+str(TEST_NUM)
 epoch_dir=root+"/epoch"
 log_dir=root+'/logs'
 
