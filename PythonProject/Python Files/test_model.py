@@ -6,7 +6,7 @@ import tensorflow as tf
 from scipy.io import loadmat  # Import this at the beginning of your script
 from collections import namedtuple
 
-MODEL_PATH = "../../../Models/mini_test_2/epoch/my_model_epoch_02.keras"
+MODEL_PATH = "../../../ml_project_files/Models/mini_test_2/epoch/my_model_epoch_02.keras"
 # Specify the image size
 IMG_SIZE = (160, 160)
 # Load the model from the .h5 file
@@ -36,7 +36,7 @@ def predict(img, datapoint_map:Datapoint):
 
 # Load the `.mat` file directly
 print("Loading imdb.mat...")
-data = loadmat('../imdb_crop/imdb.mat')  # Use your actual path to the file
+data = loadmat('../../../ml_project_files/imdb_crop/imdb.mat')  # Use your actual path to the file
 imdb = data['imdb']
 
 

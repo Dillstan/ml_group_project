@@ -12,7 +12,7 @@ TEST_NUM = 2
 BATCH_SIZE = 128
 IMG_SIZE = (160, 160)
 
-root='../../../Models/mini_test_'+str(TEST_NUM)
+root='../../../ml_project_files/Models/mini_test_'+str(TEST_NUM)
 epoch_dir=root+"/epoch"
 log_dir=root+'/logs'
 
@@ -56,7 +56,7 @@ class TrainingHistoryLogger(Callback):
                 log_file.write(f"{key}: {value}\n")  # Log each metric
 
 print("Loading imdb.mat...")
-data = loadmat('../imdb_crop/imdb.mat')
+data = loadmat('../../../ml_project_files/imdb_crop/imdb.mat')
 print("Keys in .mat file:", data.keys())
 
 imdb = data['imdb']
