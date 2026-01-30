@@ -5,13 +5,32 @@ import numpy as np
 import tensorflow as tf
 from scipy.io import loadmat  # Import this at the beginning of your script
 from collections import namedtuple
+import json
+
+# Step 1: Read the JSON file
+json_file_path = '../../../ml_project_files/imdb_files/imdbwiki_to_imdb.json'  # Adjust the file path accordingly
+
+with open(json_file_path, 'r') as file:
+    # Step 2: Load JSON data
+    data = json.load(file)
+
+# Step 3: Map the data
+mapped_data = {}
+for key, value in data.items():
+    # Here key is the ID (e.g., "6488") and value is the dictionary containing other details
+    mapped_data[key] = {
+        'name': value['name'],
+        'birth_year': value['birth_year'],
+        'nconst': value['nconst'],
+        'imdb_url': value['imdb_url']
+    }
 
 MODEL_PATH = "../../../ml_project_files/Models/mini_test_2/epoch/my_model_epoch_02.keras"
 # Specify the image size
 IMG_SIZE = (160, 160)
 # Load the model from the .h5 file
 loaded_model = load_model(MODEL_PATH)
-Datapoint = namedtuple('Datapoint', 'id name year')
+#Datapoint = namedtuple('Datapoint', 'id name year')
 
 def load_and_preprocess(path):
     img = tf.io.read_file(path)
@@ -21,7 +40,7 @@ def load_and_preprocess(path):
     img = np.expand_dims(img, axis=0)
     return img
 
-def predict(img, datapoint_map:Datapoint):
+def predict(img):
     # Make predictions
     predictions = loaded_model.predict(img)
 
@@ -30,8 +49,8 @@ def predict(img, datapoint_map:Datapoint):
 
     # Retrieve and print the predicted name
     for predicted_class_id in predicted_class_ids:
-        tpl = datapoint_map.get(predicted_class_id, "Unknown")  # Default to "Unknown" if ID not found
-        print(f"Predicted class_id (for the ML): {predicted_class_id}:\n\tPredicted IMDB ID: {tpl.id}\n\tPredicted Name: {tpl.name},\n\tPredicted DOB: {tpl.year}\n")
+        row = mapped_data[str(predicted_class_id)]
+        print(f"Predicted class_id (for the ML): {predicted_class_id}:\n\tPredicted IMDB ID: {row['nconst']}\n\tPredicted Name: {row['name']},\n\tPredicted DOB: {row['birth_year']}\n")
 
 
 # Load the `.mat` file directly
@@ -56,7 +75,7 @@ def matlab_to_datetime(matlab_date):
 
 
 # Use the celeb_names to create the mapping
-datapoint_map = {i: Datapoint(celeb_ids[i], celeb_names[i], matlab_to_datetime(dob_offsets[i])) for i in range(len(celeb_names))}
+#datapoint_map = {i: Datapoint(celeb_ids[i], celeb_names[i], matlab_to_datetime(dob_offsets[i])) for i in range(len(celeb_names))}
 
 # Load and preprocess the image
 img1 = load_and_preprocess("../Test Images/OIP-2155502055.jpg")
@@ -64,6 +83,7 @@ img2 = load_and_preprocess("../Test Images/img.jpg")
 img3 = load_and_preprocess("../Test Images/cilian.jpg")
 
 # Make predictions
-predict(img1, datapoint_map)
-predict(img2, datapoint_map)
-predict(img3, datapoint_map)
+predict(img1)
+predict(img2)
+predict(img3)
+

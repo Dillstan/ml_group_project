@@ -9,17 +9,17 @@ from collections import defaultdict
 # -----------------------------
 # Config
 # -----------------------------
-MAT_FILE = "../../../imdb_crop/imdb.mat"  # or wiki.mat
-IMDB_TSV = "../../../name.basics.tsv"
-OUTPUT_JSON = "../../../imdbwiki_to_imdb.json"
+MAT_FILE = "../../../ml_project_files/imdb_crop/imdb.mat"  # or wiki.mat
+IMDB_TSV = "../../../ml_project_files/imdb_files/name.basics.tsv"
+OUTPUT_JSON = "../../../ml_project_files/imdb_files/imdbwiki_to_imdb.json"
 
 # -----------------------------
 # Utilities
 # -----------------------------
 def normalize_name(name):
-    name = name[0][0].lower()
-    name = re.sub(r"[^a-z\s]", "", name)
-    name = re.sub(r"\s+", " ", name).strip()
+    name = name.lower()
+    #name = re.sub(r"[^a-z\s]", "", name)
+    #name = re.sub(r"\s+", " ", name).strip()
     return name
 
 def matlab_datenum_to_year(d):
@@ -36,16 +36,22 @@ mat = scipy.io.loadmat(MAT_FILE)
 
 data = mat['imdb']
 
-names = [n[0] for n in data["name"][0]]
-dob = data["dob"][0]
-internal_ids = data["celeb_id"][0]
+# Access the fields correctly
+names = data['name'][0, 0]
+dob = data['dob'][0, 0]
+internal_ids = data['celeb_id'][0, 0]
+
+# Optional: Convert from numpy arrays to lists if needed
+names_list = names.flatten().tolist()
+dob_list = dob.flatten().tolist()
+internal_ids_list = internal_ids.flatten().tolist()
 
 dataset_people = []
-for iid, name, d in zip(internal_ids, names, dob):
+for iid, name, d in zip(internal_ids_list, names_list, dob_list):
     dataset_people.append({
-        "internal_id": int(iid[0][0]),
-        "name": name,
-        "birth_year": matlab_datenum_to_year(d[0][0])
+        "internal_id": int(iid),
+        "name": name[0],
+        "birth_year": matlab_datenum_to_year(d)
     })
 
 print(f"Loaded {len(dataset_people)} identities")
@@ -59,14 +65,12 @@ imdb_index = defaultdict(list)
 with open(IMDB_TSV, encoding="utf-8") as f:
     reader = csv.DictReader(f, delimiter="\t")
     for row in reader:
+
         if row["birthYear"] == "\\N":
             continue
 
-        professions = row["primaryProfession"]
-        if "actor" not in professions or "actress" not in professions:
-            continue
-
-        imdb_index[normalize_name(row["primaryName"])].append({
+        imdb_index[(row["primaryName"]).lower()].append({
+            "name": row["primaryName"],
             "nconst": row["nconst"],
             "birth_year": int(row["birthYear"])
         })
@@ -80,12 +84,19 @@ print("Matching identities...")
 mapping = {}
 matched = 0
 
+not_added = 0
+not_added_names = []
+
 for p in dataset_people:
-    name_key = normalize_name(p["name"])
+    name_key = p["name"].lower()
     birth_year = p["birth_year"]
 
-    if not birth_year or name_key not in imdb_index:
+    if name_key not in imdb_index:
+        not_added += 1
+        not_added_names.append(f"IMDB-WIKI: {name_key}, {birth_year}")
+        print("name key not found: "+name_key)
         continue
+
 
     candidates = imdb_index[name_key]
 
@@ -103,14 +114,23 @@ for p in dataset_people:
 
     if match:
         mapping[p["internal_id"]] = {
-            "name": p["name"],
+            "name": name_key,
             "birth_year": birth_year,
             "nconst": match["nconst"],
             "imdb_url": f"https://www.imdb.com/name/{match['nconst']}/"
         }
         matched += 1
+    else:
+        not_added += 1
+        not_added_names.append(f'IMDB-WIKI: {name_key}, {birth_year} | IMDB: {c["nconst"]}, {c["birth_year"]}')
+        print(f'imdb-wiki name: {name_key} ---- imdb name: {c["name"]}')
 
 print(f"Matched {matched} identities")
+
+with open("../../../ml_project_files/imdb_files/json_names_missed.txt", "w") as output:
+    distinct = list(dict.fromkeys(not_added_names))
+    output.write(str(len(distinct)) + "\n")
+    output.write("\n".join(distinct))
 
 # -----------------------------
 # Save

@@ -66,21 +66,23 @@ print("imdb shape:", imdb.shape)
 # Extract raw fields
 print("Extracting full_path and celeb_id...")
 file_paths_raw = np.squeeze(imdb['full_path'])
-celeb_ids_raw  = np.squeeze(imdb['celeb_id'])
+celeb_internal_ids_raw  = np.squeeze(imdb['celeb_id'])
 
 print("file_paths_raw type:", type(file_paths_raw))
-print("celeb_ids_raw type:", type(celeb_ids_raw))
+print("celeb_ids_raw type:", type(celeb_internal_ids_raw))
 
 # These are object arrays wrapped inside .item()
 file_paths_raw = file_paths_raw.item()[0]
-celeb_ids_raw  = celeb_ids_raw.item()[0]
+celeb_internal_ids_raw  = celeb_internal_ids_raw.item()[0]
+
+
 
 num_imgs = len(file_paths_raw)
 print("Number of images:", num_imgs)
-print("Number of labels:", len(celeb_ids_raw))
+print("Number of labels:", len(celeb_internal_ids_raw))
 
 print("First raw path entry:", file_paths_raw[0])
-print("First raw celeb_id:", celeb_ids_raw[0])
+print("First raw celeb_id:", celeb_internal_ids_raw[0])
 
 def load_image(path):
     img = cv2.imread(path)
@@ -94,7 +96,7 @@ def load_image(path):
 # Build full paths
 print("Building image paths...")
 paths = ['imdb_crop/' + str(p[0]) for p in file_paths_raw]
-labels = celeb_ids_raw.astype(int)
+labels = celeb_internal_ids_raw.astype(int)
 
 print("Sample constructed path:", paths[0])
 print("Sample label:", labels[0])
@@ -196,3 +198,5 @@ if pred_id < len(celeb_names):
     print("Predicted Name:", celeb_names[pred_id][0])
 else:
     print("⚠️ Predicted ID out of range for celeb_names")
+
+
