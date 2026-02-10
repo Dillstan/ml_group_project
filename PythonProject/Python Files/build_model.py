@@ -7,6 +7,7 @@ import tensorflow as tf
 from tensorflow.keras import layers, models
 import os
 from tensorflow.keras.callbacks import ModelCheckpoint, Callback  # Import necessary callbacks
+import json
 
 TEST_NUM = 2
 BATCH_SIZE = 128
@@ -25,6 +26,25 @@ os.makedirs(epoch_dir, exist_ok=True)
 # Save model and log training history after each epoch
 checkpoint_path_h5 = epoch_dir+"/my_model_epoch_{epoch:02d}.h5"  # Save model with epoch number in the filename
 checkpoint_path_keras = epoch_dir+"/my_model_epoch_{epoch:02d}.keras"  # Save model with epoch number in the filename
+
+# Step 1: Read the JSON file
+json_file_path = '../../../ml_project_files/imdb_files/imdbwiki_to_imdb.json'  # Adjust the file path accordingly
+
+with open(json_file_path, 'r') as file:
+    # Step 2: Load JSON data
+    data = json.load(file)
+
+# Step 3: Map the data
+mapped_data = {}
+for key, value in data.items():
+    # Here key is the ID (e.g., "6488") and value is the dictionary containing other details
+    mapped_data[key] = {
+        'name': value['name'],
+        'birth_year': value['birth_year'],
+        'nconst': value['nconst'],
+        'imdb_url': value['imdb_url']
+    }
+
 
 # Create ModelCheckpoint callback
 checkpoint_callback_h5 = ModelCheckpoint(
@@ -66,7 +86,13 @@ print("imdb shape:", imdb.shape)
 # Extract raw fields
 print("Extracting full_path and celeb_id...")
 file_paths_raw = np.squeeze(imdb['full_path'])
+
 celeb_internal_ids_raw  = np.squeeze(imdb['celeb_id'])
+celeb_name_raw = np.squeeze(imdb['name'])
+celeb_dob_raw = np.squeeze(imdb['dob'])
+
+
+celeb_external_id_raw = np.squeeze(imdb[''])
 
 print("file_paths_raw type:", type(file_paths_raw))
 print("celeb_ids_raw type:", type(celeb_internal_ids_raw))
