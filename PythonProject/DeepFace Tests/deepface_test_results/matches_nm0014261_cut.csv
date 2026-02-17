@@ -1,0 +1,2 @@
+id,img_name,model_name,detector_backend,aligned,l2_normalized,search_method,target_x,target_y,target_w,target_h,threshold,distance_metric,distance,confidence
+32,/Users/dilloncoker/Desktop/spring_26/machine_learning/ml_project_files/imdb_crop/61/nm0593961_rm280335872_1976-8-9_2008.jpg,VGG-Face,opencv,True,False,exact,453,431,78,103,0.68,cosine,0.6558750627664727,52.82
