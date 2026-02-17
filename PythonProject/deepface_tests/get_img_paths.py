@@ -12,7 +12,7 @@ all_image_paths = glob.glob(os.path.join(root_dir, "**", "*.jpg"), recursive=Tru
 print(f"Found {len(all_image_paths)} images.")
 #print(all_image_paths[:5])
 
-#with open('imgpaths', 'w') as f:
+#with open('./logs/db_reg_imgpaths', 'w') as f:
 #    for image_path in all_image_paths:
 #        f.write(image_path+'\n')
 
