@@ -1,15 +1,15 @@
 from deepface import DeepFace as df
 import os
 import itertools
+import datetime
+
 
 # initalize vars
-LINE_START = 8600
+LINE_START = 52500
 
 # 1. Setup Database Connection
 # Make sure your Postgres service is actually running! ('brew services start postgresql')
 os.environ["DEEPFACE_POSTGRES_URI"] = "postgresql://deepface_user:password@localhost:5432/deepface_db"
-
-print("Starting registration...")
 
 with open("./logs/db_reg_imgpaths", 'r') as f:
     with open("./logs/db_reg_progress", 'a') as ff:
@@ -19,7 +19,7 @@ with open("./logs/db_reg_imgpaths", 'r') as f:
             index = LINE_START
 
             #write init line
-            init_message = f"\n\n--- starting registration at line {LINE_START} ---\n"
+            init_message = f"\n\n--- starting registration at line {LINE_START} | {datetime.datetime.now()} ---\n"
             ff.write(init_message)
             ff2.write(init_message)
             print(init_message)
@@ -42,9 +42,9 @@ with open("./logs/db_reg_imgpaths", 'r') as f:
 
                     # if multiple of 100 print and write to file
                     if images_added % 100 == 0:
-                        ff.write(str(images_added))
+                        ff.write(f'{images_added} - {datetime.datetime.now()}\n')
                         print(f"--- {images_added} images added ---\n")
 
                 # on exception write to file
                 except Exception as e:
-                    ff2.write(f"FAILED | Index: {index}, File: {img_path} | {e}\n")
+                    ff2.write(f"FAILED | {datetime.datetime.now()} | Index: {index}, File: {img_path} | {e}\n")
