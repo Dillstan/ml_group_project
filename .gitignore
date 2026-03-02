@@ -1,0 +1,7 @@
+.ipynb_checkpoints/
+.jupyter/
+datasets/
+lib/
+pyvenv.cfg
+.jupyter_ystore.db
+.DS_Store
