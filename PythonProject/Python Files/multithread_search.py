@@ -28,12 +28,12 @@ def extract_faces_from_image(image_path):
 # --- 2. EMBED A SINGLE FACE ---
 def embed_face(face_img):
     """
-    Takes a single cropped face and embeds it into 512D using Facenet512.
+    Takes a single cropped face and embeds it into 512D using ArcFace.
     """
     # DeepFace.represent returns a list of dictionaries; we grab the embedding vector
     embedding_obj = DeepFace.represent(
         img_path=face_img, 
-        model_name="Facenet512",
+        model_name="ArcFace",
         enforce_detection=False # Already detected in the extraction phase
     )
     return embedding_obj[0]['embedding']
