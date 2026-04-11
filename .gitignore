@@ -1,13 +1,14 @@
 .ipynb_checkpoints/
 .jupyter/
-datasets/*
+models/age_models/datasets/*
 lib/
 pyvenv.cfg
 .jupyter_ystore.db
 .DS_Store
 *.tar.gz
 __pycache__
-*.keras
+.keras
 cropped
 *.csv
 *.tar*
+*.keras
