@@ -6,12 +6,12 @@ def extract_frames_from_video(video_path, output_folder):
     Takes an .mp4 video and extracts exactly 1 frame per second.
     Saves the extracted frames as .jpg files in the output folder.
     """
-    print(f"🎬 Opening video file: {video_path}")
+    print(f" Opening video file: {video_path}")
     
     # 1. Load the video
     cap = cv2.VideoCapture(video_path)
     if not cap.isOpened():
-        print("❌ Error: Could not open video file.")
+        print(" Error: Could not open video file.")
         return []
 
     # 2. Get video specs (Frames Per Second)
@@ -25,7 +25,7 @@ def extract_frames_from_video(video_path, output_folder):
     saved_count = 0
     saved_image_paths = []
 
-    print("📸 Extracting 1 frame per second...")
+    print("Extracting 1 frame per second...")
     
     # 3. Loop through the video frame by frame
     while True:
@@ -57,7 +57,7 @@ def extract_frames_from_video(video_path, output_folder):
 
 # --- MAIN EXECUTION ---
 if __name__ == "__main__":
-    # Point these to a real video file and output folder on your Mac!
+    # Point these to a real video file and output folder
     TEST_VIDEO = "Creed_3_trailer.mp4" 
     OUTPUT_DIR = "creed3_extracted_frames"
     
