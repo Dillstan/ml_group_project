@@ -3,12 +3,13 @@ from scipy.io import loadmat
 import psycopg2
 
 # --- CONFIGURATION ---
-MAT_FILE_PATH = '../../../ml_project_files/imdb_crop/imdb.mat'
+MAT_FILE_PATH = '../../ml_project_files/imdb_crop/imdb.mat'
 DB_CONFIG = {
     "dbname": "deepface_db",
     "user": "deepface_user",
     "password": "password",
-    "host": "localhost"
+    "host": "localhost",
+    "port": "5432"
 }
 
 
