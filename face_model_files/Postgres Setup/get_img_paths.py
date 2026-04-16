@@ -3,7 +3,7 @@ import os
 
 # Define your root folder
 # Use os.path.abspath to avoid ".." confusion later
-root_dir = os.path.abspath("../../../../ml_project_files/imdb_crop")
+root_dir = os.path.abspath("../../../ml_project_files/imdb_crop")
 
 # The "**" tells it to look in all subfolders
 # recursive=True is required for "**" to work

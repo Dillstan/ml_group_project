@@ -1,7 +1,11 @@
 import psycopg2 as pg
-from deepface import DeepFace as df
-import time
-PG_URI = 'postgresql://deepface_user:password@localhost:5432/deepface_db'
+DB_CONFIG = {
+    "dbname": "deepface_db",
+    "user": "deepface_user",
+    "password": "password",
+    "host": "localhost",
+    "port": "5432"
+}
 
 
 class cmp_result:
@@ -21,8 +25,8 @@ class cmp_result:
     def __str__(self):
         return f'--- --- ---\n\nactor_id: {self.actor_id}\ndistance: {self.distance}\nconfidence: {self.confidence}\n--- --- ---'
 
-def quick_search(target_embedding,num_rows):
-    connection = pg.connect(PG_URI)
+def quick_search(target_embedding, top_n_faces, distance_threshold):
+    connection = pg.connect(**DB_CONFIG)
     cur = connection.cursor()
 
     query = f'''
@@ -30,9 +34,9 @@ def quick_search(target_embedding,num_rows):
         select actor_id, embedding::vector <=> %s::vector distance from arc_face.embeddings
         )
         select * from q1
-        where distance < 0.50
+        where distance < {distance_threshold}
         order by distance asc
-        limit {num_rows}
+        limit {top_n_faces}
     '''
 
     cur.execute(query, (str(target_embedding),))
