@@ -64,20 +64,20 @@ def process_single_face(face_img, face_id):
     print(f"[Thread {face_id}] Query complete: {result['match']}")
     return {"face_id": face_id, "result": result}
 
-
-# --- MAIN EXECUTION ---
-if __name__ == "__main__":
-    TEST_IMAGE = "../Test Images/Creed3.jpg" # Use a picture with multiple people!
-    
+# --- 5. THE MAIN SEARCH FUNCTION ---
+def search_image(image_path):
+    """
+    Executes the entire facial extraction and search pipeline on a single image.
+    Wrapped in a function so it can be imported by video_pipeline.py.
+    """
     # Step A: Extract all faces (Sequential)
-    faces = extract_faces_from_image(TEST_IMAGE)
+    faces = extract_faces_from_image(image_path)
     
     if faces:
         print("\n--- Starting Multi-threaded Embedding & Querying ---")
         start_time = time.time()
         
         # Step B: Multithreaded Embedding and Querying
-        # We use ThreadPoolExecutor to run process_single_face concurrently for every face found
         results = []
         with concurrent.futures.ThreadPoolExecutor(max_workers=len(faces)) as executor:
             # Submit all faces to the thread pool
@@ -88,4 +88,13 @@ if __name__ == "__main__":
                 results.append(future.result())
                 
         end_time = time.time()
-        print(f"\nTotal Processing Time for {len(faces)} faces: {end_time - start_time:.2f} seconds")
+        print(f"Total Processing Time for {len(faces)} faces: {end_time - start_time:.2f} seconds")
+        return results
+    
+    return []
+
+# --- MAIN EXECUTION (Local Testing Only) ---
+if __name__ == "__main__":
+    # It keeps our old single-image test working if we ever just run this file by itself.
+    TEST_IMAGE = "../Test Images/Creed3.jpg"
+    search_image(TEST_IMAGE)
