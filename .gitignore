@@ -12,3 +12,4 @@ cropped
 *.csv
 *.tar*
 *.keras
+.idea/*
