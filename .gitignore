@@ -12,4 +12,5 @@ cropped
 *.csv
 *.tar*
 *.keras
-.idea/*
+.idea/
+~depricated_code/
