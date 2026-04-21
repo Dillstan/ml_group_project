@@ -1,21 +1,26 @@
 let selectedFile = null;
 let selectedFaceIndex = null;
+
 let USE_MOCK_DATA = true;                    // Turn this to false when the backend is ready
 const BACKEND_URL = "http://localhost:5000"; // replace with the backend remote container location later
 
 const dropZone = document.getElementById("drop-zone");
+const runBtn = document.getElementById("runBtn");
+const mockToggle = document.getElementById("mockToggle");
+const fileInput = document.getElementById("fileInput");
 
 dropZone.onclick = () => {
     document.getElementById("fileInput").click();
 };
 
-document.getElementById("fileInput").onchange = (e) => {
+fileInput.addEventListener("change", (e) => {
     selectedFile = e.target.files[0];
     dropZone.innerHTML = `
-  <p>${selectedFile.name}</p>
-  <p style="opacity:0.6">${selectedFile.type}</p>
-`;
-};
+        <p>${selectedFile.name}</p>
+        <p style="opacity:0.6">${selectedFile.type}</p>
+    `;
+    updateButtonState();
+});
 
 dropZone.addEventListener("dragover", (e) => {
     e.preventDefault();
@@ -27,10 +32,18 @@ dropZone.addEventListener("drop", (e) => {
     dropZone.innerHTML = `<p>${selectedFile.name}</p>`;
 });
 
+function updateButtonState() {
+    const isFileSelected = selectedFile !== null;
+    const isMockChecked = mockToggle.checked;
 
-// document.getElementById("mockToggle").onchange = (e) => {
-//     USE_MOCK_DATA = e.target.checked;
-// };
+    // Button is disabled if BOTH are false
+    runBtn.disabled = !(isFileSelected || isMockChecked);
+}
+
+mockToggle.onchange = (e) => {
+    USE_MOCK_DATA = e.target.checked;
+    updateButtonState(); // Check if we should enable button
+};
 
 document.getElementById("runBtn").onclick = runAnalysis;
 
@@ -45,9 +58,10 @@ async function runAnalysis() {
         data = await callBackend();
     }
 
-    // document.getElementById("status").innerText =
-    //     `Detected ${data.faces.length} faces`;
-
+    document.getElementById("status").innerText =
+        `Detected ${data.faces.length} faces`;
+    document.getElementById("faces-container-wrapper").style.display = "block";
+    document.getElementById("media-container").style.display = "block";
     renderFaces(data.faces);
     renderMedia(data.media);
 }
@@ -62,7 +76,7 @@ async function callBackend() {
     const formData = new FormData();
     formData.append("file", selectedFile);
 
-    const res = await fetch( BACKEND_URL, {
+    const res = await fetch(BACKEND_URL, {
         method: "POST",
         body: formData
     });
@@ -83,20 +97,21 @@ function renderFaces(faces) {
         }
 
         card.innerHTML = `
-            <img src="${face.image}" style="width:100%; border-radius:8px;" />
+            <img src="${face.image.includes('MOCK') ? 'test.png' : face.image}" style="width:100%; border-radius:8px;" />
             <p>Age: ${face.age}</p>
             <p>${face.actors[0].name}</p>
         `;
 
         card.onclick = () => {
             selectedFaceIndex = index;
+            document.getElementById("face-detail").style.display = "block";
             renderFaces(faces); // need to rerender the faces strip apparently
             renderFaceDetail(face);
         };
 
         container.appendChild(card);
     });
-    
+
 }
 function renderFaceDetail(face) {
     const container = document.getElementById("face-detail");
@@ -104,7 +119,7 @@ function renderFaceDetail(face) {
     container.innerHTML = `
         <h2>Face Breakdown</h2>
 
-        <img src="${face.image}" style="width:200px; border-radius:10px;" />
+        <img src="${face.image.includes('MOCK') ? 'test.png' : face.image}" style="width:200px; border-radius:10px;" />
 
         <h3>Age Prediction</h3>
         <p>${face.age} years (± ${face.mae})</p>
@@ -127,9 +142,11 @@ function renderMedia(media) {
 
         div.innerHTML = `
             <h3>${item.title} (${item.year})</h3>
-            <img src="${item.poster}" style="width:120px; border-radius:8px;" />
+            <img src="${item.poster.includes('MOCK') ? 'test.png' : item.poster}" style="width:120px; border-radius:8px;" />
         `;
 
         container.appendChild(div);
     });
 }
+
+updateButtonState();
