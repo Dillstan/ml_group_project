@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Reel-ize Movie Finder</title>
+</head>
+
+<body>
+
+    <h1>Reel-ize Movie Finder</h1>
+    <!-- <label>
+        <input type="checkbox" id="mockToggle" checked />
+        Use Mock Data
+    </label> -->
+    <div id="drop-zone">
+        <p>Drag & Drop Image or Video</p>
+        <p>or Click to Upload</p>
+        <input type="file" id="fileInput" accept=".png,.jpg,.jpeg,.mp4,.mov" />
+    </div>
+
+    <button id="runBtn">Run Analysis</button>
+
+    <div id="status"></div>
+
+    <div id="faces-container-wrapper">
+        <div id="faces-scroll"></div>
+    </div>
+    </div>
+    <div id="face-detail"></div>
+
+    <div id="media-container"></div>
+
+    <script src="app.js"></script>
+
+</body>
+
+<style>
+    body {
+        background: #242424;
+        color: white;
+        font-family: Arial, sans-serif;
+        text-align: center;
+        margin: 0;
+        padding: 0;
+    }
+
+    h1 {
+        margin-top: 40px;
+    }
+
+    #drop-zone {
+        border: 2px dashed #6e6e6e;
+        border-radius: 12px;
+        padding: 40px;
+        margin: 30px auto;
+        width: 420px;
+        background: #353535;
+        cursor: pointer;
+        transition: 0.2s;
+    }
+
+    #drop-zone:hover {
+        background: #222;
+        border-color: #ff4444;
+    }
+
+    #runBtn {
+        background: #ff4444;
+        border: none;
+        padding: 10px 20px;
+        color: white;
+        cursor: pointer;
+        border-radius: 6px;
+        margin-top: 10px;
+    }
+
+    #runBtn:hover {
+        background: #ff2222;
+    }
+
+    #faces-container-wrapper {
+        width: fit-content;
+        max-width: 75%;
+        margin: 40px auto;
+        background: #1a1a1a;
+        border-radius: 15px;
+        padding: 10px;
+        border: 1px solid #333;
+    }
+
+    #faces-container {
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+        margin-top: 30px;
+        gap: 12px;
+    }
+
+    .face-card {
+        background: #222;
+        padding: 10px;
+        border-radius: 10px;
+        width: 160px;
+        cursor: pointer;
+        transition: 0.2s;
+    }
+
+    .face-card:hover {
+        transform: scale(1.03);
+    }
+
+    .face-card img {
+        width: 100%;
+        border-radius: 8px;
+    }
+
+    #media-container {
+        margin-top: 50px;
+    }
+
+    /* Horizontal strip */
+    #faces-scroll {
+        display: flex;
+        gap: 12px;
+        overflow-x: auto;
+        text-align: center;
+        justify-content: safe center;
+        padding: 20px;
+        white-space: nowrap;
+    }
+
+    #faces-scroll::after,
+    #faces-scroll::before {
+        content: '';
+        margin: auto;
+    }
+
+    #faces-scroll::-webkit-scrollbar {
+        height: 8px;
+    }
+
+    #faces-scroll::-webkit-scrollbar-track {
+        background: #222;
+        border-radius: 10px;
+    }
+
+    #faces-scroll::-webkit-scrollbar-thumb {
+        background: #ff4444;
+        border-radius: 10px;
+    }
+
+    #faces-scroll::-webkit-scrollbar-thumb:hover {
+        background: #cc3333;
+    }
+
+    .face-card {
+        min-width: 140px;
+        background: #222;
+        padding: 10px;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: 0.2s;
+        flex-shrink: 0;
+    }
+
+    .face-card:hover {
+        transform: scale(1.03);
+    }
+
+    .face-card.selected {
+        border: 2px solid #ff4444;
+        transform: scale(1.05);
+    }
+
+    #face-detail {
+        margin-top: 30px;
+        padding: 50px;
+        padding-left: 150px;
+        padding-right: 150px;
+        background: #1a1a1a;
+        border-radius: 12px;
+        width: fit-content;
+        margin-left: auto;
+        margin-right: auto;
+        transition: all 0.3s ease;
+    }
+</style>
+
+</html>

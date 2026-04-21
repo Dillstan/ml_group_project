@@ -1,0 +1,97 @@
+{
+    "faces": [
+        {
+            "image": "data:image/jpeg;base64,MOCK_IMAGE_1",
+            "age": 29,
+            "mae": 3.8,
+            "actors": [
+                {
+                    "name": "Leonardo DiCaprio",
+                    "confidence": 0.62
+                },
+                {
+                    "name": "Joseph Gordon-Levitt",
+                    "confidence": 0.18
+                },
+                {
+                    "name": "Brad Pitt",
+                    "confidence": 0.10
+                },
+                {
+                    "name": "Matt Damon",
+                    "confidence": 0.06
+                },
+                {
+                    "name": "Ryan Gosling",
+                    "confidence": 0.04
+                }
+            ]
+        },
+        {
+            "image": "data:image/jpeg;base64,MOCK_IMAGE_2",
+            "age": 41,
+            "mae": 4.5,
+            "actors": [
+                {
+                    "name": "Tom Cruise",
+                    "confidence": 0.55
+                },
+                {
+                    "name": "Brad Pitt",
+                    "confidence": 0.20
+                },
+                {
+                    "name": "Keanu Reeves",
+                    "confidence": 0.12
+                },
+                {
+                    "name": "Hugh Jackman",
+                    "confidence": 0.08
+                },
+                {
+                    "name": "Will Smith",
+                    "confidence": 0.05
+                }
+            ]
+        },
+        {
+            "image": "data:image/jpeg;base64,MOCK_IMAGE_3",
+            "age": 34,
+            "mae": 2.9,
+            "actors": [
+                {
+                    "name": "Emma Stone",
+                    "confidence": 0.50
+                },
+                {
+                    "name": "Scarlett Johansson",
+                    "confidence": 0.22
+                },
+                {
+                    "name": "Natalie Portman",
+                    "confidence": 0.14
+                },
+                {
+                    "name": "Margot Robbie",
+                    "confidence": 0.09
+                },
+                {
+                    "name": "Jennifer Lawrence",
+                    "confidence": 0.05
+                }
+            ]
+        }
+    ],
+    "media": [
+        {
+            "title": "Inception",
+            "year": "2010",
+            "poster": "data:image/jpeg;base64,MOCK_POSTER_1"
+        },
+        {
+            "title": "Edge of Tomorrow",
+            "year": "2014",
+            "poster": "data:image/jpeg;base64,MOCK_POSTER_2"
+        }
+    ]
+}
