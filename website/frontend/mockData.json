@@ -86,12 +86,14 @@
         {
             "title": "Inception",
             "year": "2010",
-            "poster": "data:image/jpeg;base64,MOCK_POSTER_1"
+            "poster": "data:image/jpeg;base64,MOCK_POSTER_1",
+            "imdbId": "1375666"
         },
         {
             "title": "Edge of Tomorrow",
             "year": "2014",
-            "poster": "data:image/jpeg;base64,MOCK_POSTER_2"
+            "poster": "data:image/jpeg;base64,MOCK_POSTER_2",
+            "imdbId": "1631867"
         }
     ]
 }

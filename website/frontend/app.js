@@ -137,16 +137,27 @@ function renderMedia(media) {
     const container = document.getElementById("media-container");
     container.innerHTML = "<h2>Possible Matches</h2>";
 
-    media.forEach(item => {
-        const div = document.createElement("div");
+    const grid = document.createElement("div");
+    grid.className = "media-grid";
 
-        div.innerHTML = `
-            <h3>${item.title} (${item.year})</h3>
-            <img src="${item.poster.includes('MOCK') ? 'test.png' : item.poster}" style="width:120px; border-radius:8px;" />
+    media.forEach(item => {
+        const card = document.createElement("a"); // Use an anchor tag for clickability
+        card.className = "movie-card";
+        card.href = `https://www.imdb.com/title/tt${item.imdbId}/`;
+        card.target = "_blank"; // Opens in a new tab
+
+        card.innerHTML = `
+            <img src="${item.poster.includes('MOCK') ? 'test.png' : item.poster}" />
+            <div class="movie-info">
+                <h3>${item.title}</h3>
+                <p>${item.year}</p>
+            </div>
         `;
 
-        container.appendChild(div);
+        grid.appendChild(card);
     });
+
+    container.appendChild(grid);
 }
 
 updateButtonState();
