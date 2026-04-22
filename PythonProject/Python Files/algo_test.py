@@ -1,10 +1,14 @@
 # Import the specific functions from your new files
 from step1_tmdb import convert_imdb_to_tmdb
 from step3_tmdb import calculate_release_range
+from dotenv import load_dotenv
+import os 
 
 if __name__ == "__main__":
-    API_KEY = "YOUR_API_KEY_HERE" 
-    
+    load_dotenv()  
+
+    API_KEY = os.getenv("API_KEY")
+
     # MOCK DATA: Creed III Trio
     mock_imdb_ids = ["nm0430107", "nm1935086", "nm8244669"]
     mock_predicted_ages = [37, 38, 35] 
