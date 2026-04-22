@@ -30,7 +30,7 @@ def process_single_image(file_name, dir_basename):
       # add padding
       processed_image = ImageOps.pad(
           pil_image,
-          (256,256),
+          (224,224),
           Image.Resampling.LANCZOS,
           (0,0,0) # black padding
       )

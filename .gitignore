@@ -14,3 +14,10 @@ cropped
 *.keras
 .idea/
 ~depricated_code/
+lib64/*
+include/*
+bin/*
+*.env
+*.json
+__init__.py
+~temp_age_preprocessed/*
