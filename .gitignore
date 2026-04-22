@@ -19,3 +19,5 @@ include/*
 bin/*
 *.env
 *.json
+__init__.py
+~temp_age_preprocessed/*

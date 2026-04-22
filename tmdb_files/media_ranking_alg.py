@@ -22,8 +22,12 @@ def fetch_movies(tmdb_id):
     }
 
     response = requests.request("GET", url, headers=headers)
-    json_response = json.loads(response.text)
-    return json_response["cast"]
+    if response.status_code == 200:
+        json_response = json.loads(response.text)
+        return json_response["cast"]
+    else:
+        print(f"API Error for {tmdb_id}: {response.status_code}")
+        return []
 
 def update_movie_frequency(movie_credit):
     for movie in movie_credit: 
