@@ -1,87 +1,116 @@
 let selectedFile = null;
 let selectedFaceIndex = null;
 
-let USE_MOCK_DATA = true;                    // Turn this to false when the backend is ready
-const BACKEND_URL = "http://localhost:5000"; // replace with the backend remote container location later
+let USE_MOCK_DATA = true;
+const BACKEND_URL = "http://localhost:5000";
 
-const dropZone = document.getElementById("drop-zone");
-const runBtn = document.getElementById("runBtn");
-const mockToggle = document.getElementById("mockToggle");
-const fileInput = document.getElementById("fileInput");
-
-dropZone.onclick = () => {
-    document.getElementById("fileInput").click();
+const elements = {
+    dropZone: document.getElementById("drop-zone"),
+    runBtn: document.getElementById("runBtn"),
+    mockToggle: document.getElementById("mockToggle"),
+    fileInput: document.getElementById("fileInput"),
+    status: document.getElementById("status"),
+    mediaContainer: document.getElementById("media-container"),
+    facesWrapper: document.getElementById("faces-container-wrapper")
 };
 
-fileInput.addEventListener("change", (e) => {
-    selectedFile = e.target.files[0];
-    dropZone.innerHTML = `
-        <p>${selectedFile.name}</p>
-        <p style="opacity:0.6">${selectedFile.type}</p>
-    `;
-    updateButtonState();
-});
 
-dropZone.addEventListener("dragover", (e) => {
+
+elements.dropZone.onclick = () => elements.fileInput.click();
+
+elements.fileInput.onchange = (e) => handleFileSelect(e.target.files[0]);
+
+elements.dropZone.ondragover = (e) => e.preventDefault();
+
+elements.dropZone.ondrop = async (e) => {
     e.preventDefault();
-});
+    const files = e.dataTransfer.files;
+    
+    if (files.length > 0) {
+        handleFileSelect(files[0]);
+    } else {
+        const url = e.dataTransfer.getData("text/uri-list") || e.dataTransfer.getData("text/plain");
+        if (url) tryFetchWebImage(url);
+    }
+};
 
-dropZone.addEventListener("drop", (e) => {
-    e.preventDefault();
-    selectedFile = e.dataTransfer.files[0];             // Still researching how this works with images online
-    dropZone.innerHTML = `<p>${selectedFile.name}</p>`;
-});
-
-function updateButtonState() {
-    const isFileSelected = selectedFile !== null;
-    const isMockChecked = mockToggle.checked;
-
-    // Button is disabled if BOTH are false
-    runBtn.disabled = !(isFileSelected || isMockChecked);
+async function tryFetchWebImage(url) {
+    elements.dropZone.innerHTML = `<p>Fetching web image...</p>`;
+    try {
+        const res = await fetch(url, { cache: 'no-cache' });
+        const blob = await res.blob();
+        handleFileSelect(new File([blob], "web-image.jpg", { type: blob.type }));
+    } catch (err) {
+        elements.dropZone.innerHTML = `<p style="color:red">Security Block: Download image manually.</p>`;
+    }
 }
 
-mockToggle.onchange = (e) => {
-    USE_MOCK_DATA = e.target.checked;
-    updateButtonState(); // Check if we should enable button
-};
+function handleFileSelect(file) {
+    if (!file) return;
+    selectedFile = file;
+    renderDropZonePreview(file);
+    updateButtonState();
 
-document.getElementById("runBtn").onclick = runAnalysis;
+    // Update the status text to guide the user
+    elements.status.innerText = "Now click Run Analysis or click the box again to select another file.";
+    
+    // Optional: Add a little color to make it pop
+    elements.status.style.color = "#4dabf7"; 
+}
 
-async function runAnalysis() {
-    document.getElementById("status").innerText = "Processing...";
-
-    let data;
-
-    if (USE_MOCK_DATA) {
-        data = await loadMockData();
-    } else {
-        data = await callBackend();
+function renderDropZonePreview(file) {
+    const isVideo = file.type.startsWith('video/');
+    const fileUrl = URL.createObjectURL(file);
+    
+    elements.dropZone.innerHTML = "";
+    
+    const media = document.createElement(isVideo ? 'video' : 'img');
+    media.src = fileUrl;
+    media.className = "preview-media"; // Ensure CSS has pointer-events: none
+    if (isVideo) {
+        media.muted = true;
+        media.onloadeddata = () => media.currentTime = 1;
     }
 
-    document.getElementById("status").innerText =
-        `Detected ${data.faces.length} faces`;
-    document.getElementById("faces-container-wrapper").style.display = "block";
-    document.getElementById("media-container").style.display = "block";
-    renderFaces(data.faces);
-    renderMedia(data.media);
+    const info = document.createElement('div');
+    info.style.cssText = "position: relative; z-index: 2; pointer-events: none;";
+    info.innerHTML = `<strong>${file.name}</strong><br><span style="opacity:0.7">Click to change</span>`;
+
+    elements.dropZone.append(media, info);
 }
 
-async function loadMockData() {
-    const res = await fetch("./mockData.json");
-    console.log(res);
-    return await res.json();
+
+function updateButtonState() {
+    elements.runBtn.disabled = !(selectedFile || elements.mockToggle.checked);
 }
+
+elements.mockToggle.onchange = () => {
+    USE_MOCK_DATA = elements.mockToggle.checked;
+    updateButtonState();
+};
+
+elements.runBtn.onclick = async () => {
+    elements.status.innerText = "Processing...";
+    
+    try {
+        const data = USE_MOCK_DATA ? await (await fetch("./mockData.json")).json() : await callBackend();
+        
+        elements.status.innerText = `Detected ${data.faces.length} faces`;
+        elements.facesWrapper.style.display = "block";
+        elements.mediaContainer.style.display = "block";
+        
+        renderFaces(data.faces);
+        renderMedia(data.media);
+    } catch (err) {
+        elements.status.innerText = "Error loading data.";
+    }
+};
 
 async function callBackend() {
     const formData = new FormData();
     formData.append("file", selectedFile);
-
-    const res = await fetch(BACKEND_URL, {
-        method: "POST",
-        body: formData
-    });
-
-    return await res.json();
+    const res = await fetch(BACKEND_URL, { method: "POST", body: formData });
+    return res.json();
 }
 
 function renderFaces(faces) {
@@ -90,74 +119,49 @@ function renderFaces(faces) {
 
     faces.forEach((face, index) => {
         const card = document.createElement("div");
-        card.className = "face-card";
-
-        if (index === selectedFaceIndex) {
-            card.classList.add("selected");
-        }
-
+        card.className = `face-card ${index === selectedFaceIndex ? 'selected' : ''}`;
         card.innerHTML = `
             <img src="${face.image.includes('MOCK') ? 'test.png' : face.image}" style="width:100%; border-radius:8px;" />
             <p>Age: ${face.age}</p>
-            <p>${face.actors[0].name}</p>
+            <p><strong>${face.actors[0].name}</strong></p>
         `;
-
         card.onclick = () => {
             selectedFaceIndex = index;
-            document.getElementById("face-detail").style.display = "block";
-            renderFaces(faces); // need to rerender the faces strip apparently
+            renderFaces(faces);
             renderFaceDetail(face);
         };
-
         container.appendChild(card);
     });
-
 }
+
 function renderFaceDetail(face) {
     const container = document.getElementById("face-detail");
-
+    container.style.display = "block";
     container.innerHTML = `
         <h2>Face Breakdown</h2>
-
         <img src="${face.image.includes('MOCK') ? 'test.png' : face.image}" style="width:200px; border-radius:10px;" />
-
-        <h3>Age Prediction</h3>
-        <p>${face.age} years (± ${face.mae})</p>
-
-        <h3>Actor Confidence</h3>
-        ${face.actors.map(p => `
-            <p>
-                ${p.name}  -  ${(p.confidence * 100).toFixed(1)}%
-            </p>
-        `).join("")}
+        <h3>Age Prediction: ${face.age} (± ${face.mae})</h3>
+        ${face.actors.map(p => `<p>${p.name} - ${(p.confidence * 100).toFixed(1)}%</p>`).join("")}
     `;
 }
 
 function renderMedia(media) {
-    const container = document.getElementById("media-container");
-    container.innerHTML = "<h2>Possible Matches</h2>";
-
+    elements.mediaContainer.innerHTML = "<h2>Possible Matches</h2>";
     const grid = document.createElement("div");
     grid.className = "media-grid";
 
     media.forEach(item => {
-        const card = document.createElement("a"); // Use an anchor tag for clickability
+        const card = document.createElement("a");
         card.className = "movie-card";
         card.href = `https://www.imdb.com/title/tt${item.imdbId}/`;
-        card.target = "_blank"; // Opens in a new tab
-
+        card.target = "_blank";
         card.innerHTML = `
             <img src="${item.poster.includes('MOCK') ? 'test.png' : item.poster}" />
-            <div class="movie-info">
-                <h3>${item.title}</h3>
-                <p>${item.year}</p>
-            </div>
+            <div class="movie-info"><h3>${item.title}</h3><p>${item.year}</p></div>
         `;
-
         grid.appendChild(card);
     });
-
-    container.appendChild(grid);
+    elements.mediaContainer.appendChild(grid);
 }
 
 updateButtonState();
