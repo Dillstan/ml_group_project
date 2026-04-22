@@ -2,6 +2,7 @@ from face_model_files import deepface_functions as df
 
 def execute_program_on_image(img_path, save_path):
     # ------- Models and Preprocessing -------
+    
 
     #split faces and save to ../extracted_photos_temp
     faces = df.split_and_save(img_path, save_path)
@@ -29,5 +30,5 @@ def execute_program_on_image(img_path, save_path):
     # Get Media will also be where Max's RankMedia() function is called.
     #possible_media = GetMedia(tmdb_ids, year_range)
 
-    #this is what wer return to the UI for displaying
+    #this is what we return to the UI for displaying
     #return possible_media, actor_info, imdb_ids
