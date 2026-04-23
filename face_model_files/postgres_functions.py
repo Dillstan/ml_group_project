@@ -9,16 +9,18 @@ DB_CONFIG = {
 
 
 class cmp_result:
-    def __init__(self, _id, _actor_id, _distance, _confidence):
+    def __init__(self, _id, _actor_id, _distance, _confidence, name, dob):
         self.id = _id
         self.actor_id = _actor_id
         self.distance = _distance
         self.confidence = _confidence
+        self.dob
 
     id = 0
     actor_id = ''
     distance = 0.0
     confidence = 0.0
+    name = ""
 
     def get_confidence_percent(self):
         return f"{self.confidence*100:.2f}%"
@@ -31,7 +33,7 @@ def quick_search(target_embedding, top_n_faces, distance_threshold):
 
     query = f'''
         with q1 as (
-        select actor_id, embedding::vector <=> %s::vector distance from arc_face.embeddings
+        select actor_id, embedding::vector <=> %s::vector distance, name, dob from arc_face.embeddings
         )
         select * from q1
         where distance < {distance_threshold}
@@ -47,7 +49,9 @@ def quick_search(target_embedding, top_n_faces, distance_threshold):
         actor_id = row[0]
         distance = row[1]
         confidence = 1-distance
-        results.append(cmp_result(id, actor_id, distance, confidence))
+        name = row[2]
+        dob = row[3]
+        results.append(cmp_result(id, actor_id, distance, confidence, name, dob))
 
     return results
 
