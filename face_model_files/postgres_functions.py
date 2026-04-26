@@ -3,10 +3,10 @@ DB_CONFIG = {
     "dbname": "deepface_db",
     "user": "deepface_user",
     "password": "password",
-    "host": "localhost",
-    "port": "5432"
+    "host": "10.15.117.245",
+    "port": "5432",
+    "sslmode": "disable"
 }
-
 
 class cmp_result:
     def __init__(self, _id, _actor_id, _distance, _confidence, name, dob):
@@ -46,15 +46,19 @@ def quick_search(target_embedding, top_n_faces, distance_threshold):
     results = []
 
     for row in rows:
+        print(row[0])
         actor_id = row[0]
         distance = row[1]
         confidence = 1-distance
+<<<<<<< HEAD
         name = row[2]
         dob = row[3]
         results.append(cmp_result(id, actor_id, distance, confidence, name, dob))
+=======
+        results.append(cmp_result(None, actor_id, distance, confidence))
+>>>>>>> db9176c (algorithm completion)
 
     return results
-
 
 
 

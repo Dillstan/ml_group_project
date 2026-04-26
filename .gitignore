@@ -21,3 +21,5 @@ bin/*
 *.json
 __init__.py
 ~temp_age_preprocessed/*
+lib64
+share/

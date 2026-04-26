@@ -13,7 +13,7 @@ PATHS_FILE = './logs/db_reg_imgpaths_intersection'
 PROGRESS_LOG_FILE = './logs/db_reg_progress_intersection'
 ERROR_LOG_FILE = './logs/db_reg_error_intersection'
 MIN_FREE_SPACE_MB = 1000
-PG_URI = 'postgresql://deepface_user:password@localhost:5432/deepface_db'
+PG_URI = 'postgresql://deepface_user:password@10.15.253.176:5432/deepface_db'
 
 insert_query = '''
     insert into arc_face.embeddings (actor_id, actor_dob_yr, actor_age, img_path, img_name, img_taken_yr, embedding)

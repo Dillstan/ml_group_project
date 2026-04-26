@@ -8,6 +8,7 @@ import os
 from dotenv import load_dotenv
 from datetime import date
 from collections import defaultdict
+from itertools import repeat
 
 load_dotenv() # load environment variables
 rankings_dict = {}
@@ -29,7 +30,7 @@ def fetch_movies(tmdb_id):
         print(f"API Error for {tmdb_id}: {response.status_code}")
         return []
 
-def update_movie_frequency(movie_credit):
+def update_movie_frequency(movie_credit, year_range):
     for movie in movie_credit: 
         if (len(movie["release_date"]) == 0): # exclude in-valid movie dates
             continue
@@ -41,9 +42,11 @@ def update_movie_frequency(movie_credit):
         if (movie_year <= year_range[1] and movie_year >= year_range[0]):
             movie_details = (movie["title"], date(movie_year, movie_month, movie_day), movie["poster_path"]) # movie title, release date, poster img path
             rankings_dict[movie_details] = rankings_dict.get(movie_details, 0) + 1 # increase frequency count of movie
+    
 
-def rank_media(year_range, tmdb_ids, num_places):
 
+def rank_media(year_range, tmdb_ids, num_places=5):
+    tmdb_ids = set(tmdb_ids)
     # fetch movie credits for each actor
     with concurrent.futures.ThreadPoolExecutor(max_workers=10) as executor:
         results = list(executor.map(fetch_movies, tmdb_ids))
@@ -53,7 +56,7 @@ def rank_media(year_range, tmdb_ids, num_places):
 
     # iterate over all movies to map frequencies
     with concurrent.futures.ThreadPoolExecutor(max_workers=10) as executor:
-        executor.map(update_movie_frequency, results)
+        executor.map(update_movie_frequency, results, repeat(year_range))
 
     # group movies by frequencies
     grouped_by_freq = defaultdict(set)
@@ -81,10 +84,3 @@ def rank_media(year_range, tmdb_ids, num_places):
         rankings.extend(freq_rankings)
 
     return [movie[1] for movie in rankings[:num_places]]
-
-# testing
-year_range = (1980,2000)
-tmdb_ids = [521, 1064, 44735]
-num_places = 5
-
-print(rank_media(year_range, tmdb_ids, num_places))

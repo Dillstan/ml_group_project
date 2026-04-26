@@ -7,12 +7,11 @@ import os
 from pathlib import Path
 import concurrent.futures
 from itertools import repeat
-from tensorflow import keras
+import keras
 import numpy as np
 import re
 import tensorflow as tf
-from tensorflow import keras
-from tensorflow.keras.utils import register_keras_serializable
+from keras.saving import register_keras_serializable
 from natsort import os_sorted
 
 # Custom metric to track percent of age predictions correct within N-year tolerance.
@@ -51,6 +50,26 @@ class WithinNYears(tf.keras.metrics.Metric):
         config = super().get_config()
         config.update({"tolerance": self.tolerance})
         return config
+
+
+def load_age_model(model_path):
+    custom_objects = {
+        "WithinNYears": WithinNYears,
+        "Custom>WithinNYears": WithinNYears,
+    }
+    try:
+        return keras.models.load_model(
+            model_path,
+            compile=False,
+            custom_objects=custom_objects,
+        )
+    except (TypeError, ValueError, ImportError) as err:
+        raise RuntimeError(
+            f"Unable to load age model at '{model_path}'. "
+            "This .keras file was saved with Keras 3, so loading it via legacy tf.keras/tf_keras can fail. "
+            f"keras={keras.__version__}, tensorflow={tf.__version__}, "
+            f"TF_USE_LEGACY_KERAS={os.environ.get('TF_USE_LEGACY_KERAS')!r}."
+        ) from err
     
 # optional method to pre-process images for age_model directly
 def process_single_image(file_name, dir_basename):
@@ -111,8 +130,8 @@ def get_ages(image_dir, max_workers=1):
 
     # load age model
 
-    model_path = "./models/age_models/cnn_model_best.keras"
-    age_model = keras.models.load_model(model_path)
+    model_path = Path(__file__).resolve().parents[1] / "models" / "age_models" / "cnn_model_best.keras"
+    age_model = load_age_model(model_path)
 
     for image in images:
         img = Image.open(os.path.join(image_dir, image))
@@ -120,13 +139,6 @@ def get_ages(image_dir, max_workers=1):
         img_batch = np.expand_dims(img_array, axis=0)
 
         pred = age_model.predict(img_batch) # call model
-        print(f"{pred} - {image}")
         predicted_ages.append(round(pred[0][0]))
 
     return predicted_ages
-
-
-print(get_ages("./~temp_age_preprocessed", max_workers=10))
-
-
-
