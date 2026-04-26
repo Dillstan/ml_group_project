@@ -8,13 +8,15 @@ DB_CONFIG = {
     "sslmode": "disable"
 }
 
+
 class cmp_result:
-    def __init__(self, _id, _actor_id, _distance, _confidence, name, dob):
+    def __init__(self, _id, _actor_id, _distance, _confidence, _name, _dob):
         self.id = _id
         self.actor_id = _actor_id
         self.distance = _distance
         self.confidence = _confidence
-        self.dob
+        self.dob = _dob
+        self.name = _name
 
     id = 0
     actor_id = ''
@@ -33,7 +35,7 @@ def quick_search(target_embedding, top_n_faces, distance_threshold):
 
     query = f'''
         with q1 as (
-        select actor_id, embedding::vector <=> %s::vector distance, name, dob from arc_face.embeddings
+        select actor_id, embedding::vector <=> %s::vector distance, actor_name, dob from arc_face.embeddings
         )
         select * from q1
         where distance < {distance_threshold}
@@ -46,19 +48,11 @@ def quick_search(target_embedding, top_n_faces, distance_threshold):
     results = []
 
     for row in rows:
-        print(row[0])
         actor_id = row[0]
         distance = row[1]
         confidence = 1-distance
-<<<<<<< HEAD
         name = row[2]
         dob = row[3]
         results.append(cmp_result(id, actor_id, distance, confidence, name, dob))
-=======
-        results.append(cmp_result(None, actor_id, distance, confidence))
->>>>>>> db9176c (algorithm completion)
 
     return results
-
-
-

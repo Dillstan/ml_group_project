@@ -32,7 +32,6 @@ def execute_program_on_image(img_path, save_path):
 
     #Convert from IMDB_ID to TMDB_ID
     tmdb_ids = convert_imdb_to_tmdb(imdb_ids, API_KEY)
-    # print(tmdb_ids)
 
     #use the TMDB_ID to get all info we can on the actor (dob, name are most important here)
     # actor_info = GetActorInfo(tmdb_ids)
@@ -40,11 +39,9 @@ def execute_program_on_image(img_path, save_path):
     #Find the range of years of media we need to search through based on the algorithm we defined in Google Docs/Discord
     approximate_movie_dates = get_approximate_movie_dates(tmdb_ids, ages)
     approximate_year_range = calculate_release_range(approximate_movie_dates)
-
+    
     #Find the possible ranges of media using the tmdb_ids and year range
-    # Get Media will also be where Max's RankMedia() function is called.
-    # year_range = (1994,2008)
-    # tmdb_ids = [20810, 20387, 57581, 887, 20810]
+    
     possible_media = rank_media(approximate_year_range, tmdb_ids, 5)
     print(possible_media)
 
