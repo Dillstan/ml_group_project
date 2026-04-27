@@ -22,10 +22,13 @@ def execute_program_on_image(img_path, save_path):
     faces = df.split_and_save(img_path, save_path)
 
     # Gets the IMDB_IDS and confidence values from the postgres_db
-    imdb_objs = df.embed_and_search(faces, 5)
+    imdb_objs = df.embed_and_search(faces, top_n_faces=3)
     imdb_ids = []
     for face_matches in imdb_objs:
-        imdb_ids.append(face_matches[0].actor_id)
+        if len(face_matches) > 0:
+            imdb_ids.append(face_matches[0].actor_id)
+        else:
+            imdb_ids.append(None)
 
     # GetAges will be in the age_model_files directory and will use the photos that were saved to extracted_photos_temp and predict their ages
     ages = get_ages(save_path)
@@ -40,8 +43,12 @@ def execute_program_on_image(img_path, save_path):
         new_face_obj = {"image": f"data:image/jpg;base64,{b64_string}", "age": ages[i], "mae": 5.7}
         actors = []
         for cmp in imdb_objs[i]:
-            new_actor_obj = {"name": cmp.name, "confidence": cmp.confidence}
-            actors.append(new_actor_obj)
+            if (cmp != None):
+                new_actor_obj = {"name": cmp.name, "confidence": cmp.confidence}
+                actors.append(new_actor_obj)
+            else:
+                new_actor_obj = {"name": "Unknown", "confidence": "Very Low Confidence"}
+                actors.append(new_actor_obj)
         new_face_obj["actors"] = actors
         faces_list.append(new_face_obj)
 
@@ -54,13 +61,14 @@ def execute_program_on_image(img_path, save_path):
 
     # Find the range of years of media we need to search through based on the algorithm we defined in Google Docs/Discord
     approximate_movie_dates = get_approximate_movie_dates(tmdb_ids, ages)
-    approximate_year_range = calculate_release_range(approximate_movie_dates)
+    approximate_year_range = calculate_release_range(approximate_movie_dates, error_margin=10)
     
     # Find the possible ranges of media using the tmdb_ids and year range
 
-    possible_media = rank_media(approximate_year_range, tmdb_ids, 5)
+    possible_media = rank_media(approximate_year_range, tmdb_ids, 8)
     response["media"] = possible_media
-    print(response)
+    with open("output.txt", "w") as f:
+        f.write(str(response))
 
     return response
     

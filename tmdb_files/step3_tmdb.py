@@ -1,6 +1,7 @@
 import math
 
 def calculate_release_range(estimated_release_years, error_margin=3):
+    estimated_release_years = [x for x in estimated_release_years if x is not None]
     """
     Takes the array of years calculated in Step 2.
     1-5 Actors: Range search (Min year to Max year).

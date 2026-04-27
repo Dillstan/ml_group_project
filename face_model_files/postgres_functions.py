@@ -5,7 +5,8 @@ DB_CONFIG = {
     "password": "password",
     "host": "10.15.117.245",
     "port": "5432",
-    "sslmode": "disable"
+    "sslmode": "disable",
+    "client_encoding": "UTF8"
 }
 
 

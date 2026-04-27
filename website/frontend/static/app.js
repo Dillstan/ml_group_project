@@ -14,8 +14,6 @@ const elements = {
     facesWrapper: document.getElementById("faces-container-wrapper")
 };
 
-
-
 elements.dropZone.onclick = () => elements.fileInput.click();
 
 elements.fileInput.onchange = (e) => handleFileSelect(e.target.files[0]);
@@ -95,6 +93,9 @@ elements.runBtn.onclick = async () => {
     try {
         const data = USE_MOCK_DATA ? await (await fetch("./static/mockData.json")).json() : await callBackend();
         
+        console.log("DATA")
+        console.log(data)
+
         elements.status.innerText = `Detected ${data.faces.length} faces`;
         elements.facesWrapper.style.display = "block";
         elements.mediaContainer.style.display = "block";
@@ -120,11 +121,19 @@ function renderFaces(faces) {
     faces.forEach((face, index) => {
         const card = document.createElement("div");
         card.className = `face-card ${index === selectedFaceIndex ? 'selected' : ''}`;
-        card.innerHTML = `
+        if (face.actors.length == 0){
+            card.innerHTML = `
+            <img src="${face.image.includes('MOCK') ? 'test.png' : face.image}" style="width:100%; border-radius:8px;" />
+            <p>Age: ${face.age}</p>
+            <p><strong>Unknown Actor</strong></p>
+        `;
+        } else {
+            card.innerHTML = `
             <img src="${face.image.includes('MOCK') ? 'test.png' : face.image}" style="width:100%; border-radius:8px;" />
             <p>Age: ${face.age}</p>
             <p><strong>${face.actors[0].name}</strong></p>
         `;
+        }
         card.onclick = () => {
             selectedFaceIndex = index;
             renderFaces(faces);
