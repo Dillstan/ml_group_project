@@ -5,8 +5,6 @@ Website: https://gitops-mk.opensource.mieweb.org/
 
 
 2. Once the image or video is uplaoded, the user will press the run analysis button.
-<img width="1512" height="982" alt="Screenshot 2026-04-27 at 6 27 02 PM" src="https://github.com/user-attachments/assets/07bf5d8d-82bb-4b88-9d6b-08f63e7c36d6" />
-
 
 
 3. Here you will see that the image or video is processing.
