@@ -1,6 +1,7 @@
 Website: https://gitops-mk.opensource.mieweb.org/
 
-1. Here is the page that the link above will bring you to. You have the option to upload an image or video, along with having the option to drag and drop an image or video.<img width="922" height="693" alt="Screenshot 2026-04-27 at 6 31 22 PM" src="https://github.com/user-attachments/assets/72cfe8fd-55f1-40c8-95d8-5b204301657a" />
+1. Here is the page that the link above will bring you to. You have the option to upload an image or video, along with having the option to drag and drop an image or video.
+<img width="935" height="843" alt="Screenshot 2026-04-27 at 6 49 07 PM" src="https://github.com/user-attachments/assets/c3c76760-101f-44ed-83cf-be1d011338ff" />
 
 
 2. Once the image or video is uplaoded, the user will press the run analysis button.
