@@ -93,7 +93,7 @@ elements.runBtn.onclick = async () => {
     elements.status.innerText = "Processing...";
     
     try {
-        const data = USE_MOCK_DATA ? await (await fetch("./mockData.json")).json() : await callBackend();
+        const data = USE_MOCK_DATA ? await (await fetch("./static/mockData.json")).json() : await callBackend();
         
         elements.status.innerText = `Detected ${data.faces.length} faces`;
         elements.facesWrapper.style.display = "block";
