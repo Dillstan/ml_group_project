@@ -76,21 +76,24 @@ def split_and_save(img_path,save_path):
 
         # to be perfectly safe with OpenCV color spaces, ensure it is BGR
         # DeepFace extraction might return RGB depending on the version
+        saved_paths = []
         if face_img_ready.shape[-1] == 3:
             face_img_ready = face_img_ready[:, :, ::-1]
 
         #save rgb image to temp folder for Age Model to use
         cv2.imwrite(save_path+f'/{face_id}.jpg', face_img_ready)
+        saved_paths.append(save_path+f'/{face_id}.jpg')
 
         # return the results of deepface_split as array
-    return img_list
+    return saved_paths
 
 #here we take an array of images and embed them individually, this takes milliseconds after the faces are extracted.
 #list_of_faces requires the array returned from split_and_save
-def embed_and_search(list_of_faces, top_n_faces=1, distance_threshold=0.5):
+def embed_and_search(list_of_face_paths, top_n_faces=1, distance_threshold=0.5):
     res = []
     print("Embedding faces...")
-    for face in list_of_faces:
-        target = embed_face(face)
+    for face_path in list_of_face_paths:
+        # DeepFace handles string paths natively, bypassing the normalization bug
+        target = embed_face(face_path)
         res.append(psql.quick_search(target, top_n_faces, distance_threshold))
     return res
