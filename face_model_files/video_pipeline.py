@@ -3,7 +3,7 @@ import glob
 import time
 
 # Import existing search logic from other file
-from multithread_search import embed_face, query_database, search_image
+from .multithread_search import embed_face, query_database, search_image
 
 
 def process_video_directory(frames_folder):
@@ -16,18 +16,13 @@ def process_video_directory(frames_folder):
         print(" No frames found! Check your folder path.")
         return
 
-    print(f"🚀 Found {len(frame_paths)} frames. Starting pipeline...")
+    print(f"Found {len(frame_paths)} frames. Starting pipeline...")
     
     start_time = time.time()
 
     # Loop through every frame and run the existing multithreaded logic
     for frame_path in frame_paths:
         print(f"\n--- Analyzing {os.path.basename(frame_path)} ---")
-        
-        # Here is where you call the main logic from multithread_search.py
-        # Example: 
-        # results = run_multithreaded_pipeline(frame_path)
-        # print(results)
         search_image(frame_path)
        
 

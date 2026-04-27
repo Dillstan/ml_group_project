@@ -1,8 +1,8 @@
 let selectedFile = null;
 let selectedFaceIndex = null;
 
-let USE_MOCK_DATA = true;
-const BACKEND_URL = "http://localhost:5000";
+let USE_MOCK_DATA = false;
+const BACKEND_URL = "https://gitops-mk.opensource.mieweb.org/analyze";
 
 const elements = {
     dropZone: document.getElementById("drop-zone"),
@@ -13,8 +13,6 @@ const elements = {
     mediaContainer: document.getElementById("media-container"),
     facesWrapper: document.getElementById("faces-container-wrapper")
 };
-
-
 
 elements.dropZone.onclick = () => elements.fileInput.click();
 
@@ -90,11 +88,14 @@ elements.mockToggle.onchange = () => {
 };
 
 elements.runBtn.onclick = async () => {
-    elements.status.innerText = "Processing...";
+    elements.status.innerText = "Processing... (This may take up to 60 seconds)";
     
     try {
-        const data = USE_MOCK_DATA ? await (await fetch("./mockData.json")).json() : await callBackend();
+        const data = USE_MOCK_DATA ? await (await fetch("./static/mockData.json")).json() : await callBackend();
         
+        console.log("DATA")
+        console.log(data)
+
         elements.status.innerText = `Detected ${data.faces.length} faces`;
         elements.facesWrapper.style.display = "block";
         elements.mediaContainer.style.display = "block";
@@ -120,11 +121,19 @@ function renderFaces(faces) {
     faces.forEach((face, index) => {
         const card = document.createElement("div");
         card.className = `face-card ${index === selectedFaceIndex ? 'selected' : ''}`;
-        card.innerHTML = `
+        if (face.actors.length == 0){
+            card.innerHTML = `
+            <img src="${face.image.includes('MOCK') ? 'test.png' : face.image}" style="width:100%; border-radius:8px;" />
+            <p>Age: ${face.age}</p>
+            <p><strong>Unknown Actor</strong></p>
+        `;
+        } else {
+            card.innerHTML = `
             <img src="${face.image.includes('MOCK') ? 'test.png' : face.image}" style="width:100%; border-radius:8px;" />
             <p>Age: ${face.age}</p>
             <p><strong>${face.actors[0].name}</strong></p>
         `;
+        }
         card.onclick = () => {
             selectedFaceIndex = index;
             renderFaces(faces);
@@ -153,7 +162,7 @@ function renderMedia(media) {
     media.forEach(item => {
         const card = document.createElement("a");
         card.className = "movie-card";
-        card.href = `https://www.imdb.com/title/tt${item.imdbId}/`;
+        card.href = `https://www.imdb.com/title/${item.imdbId}/`;
         card.target = "_blank";
         card.innerHTML = `
             <img src="${item.poster.includes('MOCK') ? 'test.png' : item.poster}" />
