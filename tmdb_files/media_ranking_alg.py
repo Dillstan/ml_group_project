@@ -64,7 +64,7 @@ def format_json(results):
     media = []
     for result in results:
         imdb_id = get_imdb_id(result[3], result[4])
-        movie_obj = {"title": result[0], "year": result[1].year, "poster": result[2], "imdbId": imdb_id}
+        movie_obj = {"title": result[0], "year": result[1].year, "poster": f"https://image.tmdb.org/t/p/w500{result[2]}", "imdbId": imdb_id}
         media.append(movie_obj)
     return media
 

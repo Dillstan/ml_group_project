@@ -5,6 +5,7 @@ from tmdb_files.step2_tmdb import get_approximate_movie_dates
 from tmdb_files.step3_tmdb import calculate_release_range
 from tmdb_files.media_ranking_alg import rank_media
 from dotenv import load_dotenv
+import base64
 import os
 
 def execute_program_on_image(img_path, save_path):
@@ -31,7 +32,12 @@ def execute_program_on_image(img_path, save_path):
 
     # format response
     for i in range(len(ages)):
-        new_face_obj = {"image": "n/a", "age": ages[i], "mae": 5.7}
+        # get base64 of image
+        with open(f"~extracted_photos_temp/{i}.jpg", "rb") as img_file:
+            b64_bytes = base64.b64encode(img_file.read())
+            b64_string = b64_bytes.decode("utf-8")
+        
+        new_face_obj = {"image": f"data:image/jpg;base64,{b64_string}", "age": ages[i], "mae": 5.7}
         actors = []
         for cmp in imdb_objs[i]:
             new_actor_obj = {"name": cmp.name, "confidence": cmp.confidence}

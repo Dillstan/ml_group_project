@@ -1,8 +1,8 @@
 let selectedFile = null;
 let selectedFaceIndex = null;
 
-let USE_MOCK_DATA = true;
-const BACKEND_URL = "http://localhost:5000";
+let USE_MOCK_DATA = false;
+const BACKEND_URL = "https://gitops-mk.opensource.mieweb.org/analyze";
 
 const elements = {
     dropZone: document.getElementById("drop-zone"),
@@ -90,7 +90,7 @@ elements.mockToggle.onchange = () => {
 };
 
 elements.runBtn.onclick = async () => {
-    elements.status.innerText = "Processing...";
+    elements.status.innerText = "Processing... (This may take up to 60 seconds)";
     
     try {
         const data = USE_MOCK_DATA ? await (await fetch("./static/mockData.json")).json() : await callBackend();
@@ -153,7 +153,7 @@ function renderMedia(media) {
     media.forEach(item => {
         const card = document.createElement("a");
         card.className = "movie-card";
-        card.href = `https://www.imdb.com/title/tt${item.imdbId}/`;
+        card.href = `https://www.imdb.com/title/${item.imdbId}/`;
         card.target = "_blank";
         card.innerHTML = `
             <img src="${item.poster.includes('MOCK') ? 'test.png' : item.poster}" />
