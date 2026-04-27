@@ -72,15 +72,18 @@ def load_age_model(model_path):
         ) from err
     
 # optional method to pre-process images for age_model directly
-def process_single_image(file_name, dir_basename):
+def process_image(file_name):
     try:
-        image = face_recognition.load_image_file(os.path.join(dir_basename, file_name))
+        image = face_recognition.load_image_file(file_name)
         face_locations = face_recognition.face_locations(image, model="hog")
-        if len(face_locations) > 0: # face found in image
+
+        saved_files = []
+
+        for i, face_location in enumerate(face_locations):
 
             # Get Cropped Image
             height, width = image.shape[:2]
-            top, right, bottom, left = face_locations[0]
+            top, right, bottom, left = face_location
 
             box_h = bottom - top
             box_w = right - left
@@ -102,12 +105,16 @@ def process_single_image(file_name, dir_basename):
                 Image.Resampling.LANCZOS,
                 (0,0,0) # black padding
             )
+            
+            base_name, extension = os.path.splitext(file_name)
+            base_name = base_name.split("/")[2]
+            new_file_name = f"~extracted_photos_temp/{base_name}_{i}{extension}"
 
-            os.makedirs(f"./~temp_age_preprocessed", exist_ok=True)
-            processed_image.save(f"./~temp_age_preprocessed/{file_name}")
-            return (file_name, True)
+            os.makedirs(f"./~extracted_photos_temp", exist_ok=True)
+            processed_image.save(new_file_name)
+            saved_files.append(new_file_name)
         
-        return (file_name, False) # no face detected
+        return saved_files
 
     except Exception as err:
         print(err)

@@ -71,5 +71,3 @@ def execute_program_on_image(img_path, save_path):
         f.write(str(response))
 
     return response
-    
-

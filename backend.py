@@ -14,8 +14,8 @@ def analyze():
     if file.filename == '':
         return jsonify({"error": "No selected file"}), 400
     if file:
-        file.save(os.path.join("~input_photos_temp", file.filename))
-        IMG_PATH = os.path.join("~input_photos_temp", file.filename)
+        file.save(os.path.join("./~input_photos_temp", file.filename))
+        IMG_PATH = os.path.join("./~input_photos_temp", file.filename)
         SAVE_PATH = './~extracted_photos_temp'
         response = tmdb.execute_program_on_image(img_path=IMG_PATH, save_path=SAVE_PATH)
         
