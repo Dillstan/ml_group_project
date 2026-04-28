@@ -42,6 +42,7 @@ def update_movie_frequency(movie_credit, year_range):
         if (movie_year <= year_range[1] and movie_year >= year_range[0]):
             movie_details = (movie["title"], date(movie_year, movie_month, movie_day), movie["poster_path"], movie["id"]) # movie title, release date, poster img path
             rankings_dict[movie_details] = rankings_dict.get(movie_details, 0) + 1 # increase frequency count of movie
+    
 
 # grab IMDB ID
 def get_imdb_id(internal_id, type="movie"):

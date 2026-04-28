@@ -54,6 +54,7 @@ def execute_program_on_image(img_path, save_path):
 
     response["faces"] = faces_list
 
+    
     # ------- TMDB Algo -------
 
     # Convert from IMDB_ID to TMDB_ID

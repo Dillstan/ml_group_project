@@ -9,7 +9,6 @@ DB_CONFIG = {
     "client_encoding": "UTF8"
 }
 
-
 class cmp_result:
     def __init__(self, _id, _actor_id, _distance, _confidence, _name, _dob):
         self.id = _id
@@ -49,6 +48,7 @@ def quick_search(target_embedding, top_n_faces, distance_threshold):
     results = []
 
     for row in rows:
+        print(row[0])
         actor_id = row[0]
         distance = row[1]
         confidence = 1-distance
